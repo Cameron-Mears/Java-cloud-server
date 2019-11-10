@@ -1,11 +1,12 @@
 package com.security.encryption;
 
 import java.io.File;
-import java.io.ObjectInputStream;
 import java.security.Key;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+
+import com.filesys.JFile;
 
 public final class EncrytionEngine 
 {
@@ -42,8 +43,5 @@ public final class EncrytionEngine
 		return null;
 	}
 	
-	public void processFile(File data)
-	{
-		
-	}
+	
 }

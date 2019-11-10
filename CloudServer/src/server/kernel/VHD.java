@@ -5,5 +5,5 @@ package server.kernel;
  */
 public final class VHD 
 {
-	
+	private long byteSize;
 }

@@ -1,5 +1,6 @@
 package server.security.authentication;
 
+import com.security.hash.SHA256;
 import com.security.logon.LongOnRequest;
 
 import server.user.User;
@@ -8,7 +9,7 @@ import server.user.base.UserBase;
 public final class UserAuthentication 
 {	
 	private UserBase userBase;
-	
+	private static int hashTimes = 10000;
 	public UserAuthentication(UserBase base)
 	{
 		
@@ -16,6 +17,14 @@ public final class UserAuthentication
 	
 	public User authenticateLogon(LongOnRequest request)
 	{
+		User usr = userBase.fetch(request.username);
+		byte[] passIn = (usr.getPassSalt().get() + request.password).getBytes();
+		if (usr == null)return null;
+		
+		for (int hash = 0; hash < hashTimes; hash++) passIn = SHA256.doHash(passIn);
+		
+		if (usr.getHashedPass().equals(new String(passIn))) return usr;
+		
 		return null;
 	}
 }

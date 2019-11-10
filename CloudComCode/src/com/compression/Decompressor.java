@@ -1,5 +1,6 @@
 package com.compression;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,7 +15,7 @@ public class Decompressor
 		FileInputStream fos = null;
 		GZIPInputStream decompress = null;
 		try {
-			fos = new FileInputStream(compressed.data);
+			fos = new FileInputStream(new File(""));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -19,7 +19,7 @@ public final class UserBase implements Serializable
 	public static final int USER_PUSH_ERROR_EMAIL_IN_USE = 3;
 	
 	
-	private static final int numberOfBaseIndexs = 1000000000;
+	private static final int numberOfBaseIndexs = 1000;
 	private HashMap<String, User> userLookup;
 	
 	public UserBase()
@@ -38,6 +38,9 @@ public final class UserBase implements Serializable
 		return userLookup.get(username);
 		
 	}
+	
+	
+	
 	
 	
 	

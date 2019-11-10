@@ -1,5 +1,6 @@
 package server.user;
 
-public class NewUser extends User {
+public class NewUser extends User 
+{
 
 }

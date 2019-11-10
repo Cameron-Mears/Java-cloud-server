@@ -1,5 +1,6 @@
 package com.compression;
 
-public class Compressor {
+public class Compressor 
+{
 
 }
