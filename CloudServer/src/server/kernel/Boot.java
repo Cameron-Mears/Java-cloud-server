@@ -4,6 +4,7 @@ package server.kernel;
 import java.util.Scanner;
 
 import com.security.hash.Fletcher16;
+import com.security.hash.SHA256;
 
 import server.user.base.UserBase;
 import server.user.base.table.HashTable;
@@ -14,7 +15,7 @@ public final class Boot
 	public static void main(String[] args) 
 	{
 		HashTable<String, Integer> test = new HashTable<String, Integer>(1);
-		for (int i = 0; i < 1000000; i ++)
+		for (int i = 0; i < 100; i ++)
 		{
 			String name = "hi" + Integer.toString(i);
 			test.put(name, i);
@@ -37,6 +38,8 @@ public final class Boot
 				System.out.println(System.currentTimeMillis()-now);
 				if (i == null) System.out.println("No Value at Index");
 				else System.out.println(i);
+				
+				System.out.println(new String(SHA256.doHash(in.getBytes())));
 			}
 		}
 	}

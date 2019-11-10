@@ -3,18 +3,21 @@ package server.user.base.table;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.zip.CRC32;
 
+
+/*
+ * HashTable with collision Handling
+ */
 
 public class HashTable<Key, Val> implements Serializable
 {
 
-	private class Entry<Key, Val>
+	private class Entry<K, V>
 	{
-		public Key key;
-		public Val val;
+		public K key;
+		public V val;
 		
-		public Entry(Key k, Val v)
+		public Entry(K k, V v)
 		{
 			key = k;
 			val = v;
@@ -27,10 +30,8 @@ public class HashTable<Key, Val> implements Serializable
 	
 	private int size;
 	private ArrayList<LinkedList<Entry<Key, Val>>> indexes;
-	private CRC32 hash;
 	
 	
-	@SuppressWarnings("unchecked")
 	public HashTable(int capacity)
 	{
 		indexes = new ArrayList<LinkedList<Entry<Key, Val>>>(capacity);
@@ -48,7 +49,6 @@ public class HashTable<Key, Val> implements Serializable
 		return Math.abs(key.hashCode()) % this.size;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Val get(Key key) 
 	{		
 		LinkedList<Entry<Key,Val>> list = indexes.get(toIndex(key));
@@ -62,10 +62,15 @@ public class HashTable<Key, Val> implements Serializable
 	}
 	
 	
-	public boolean put(Key key, Val val)
+	public boolean put(Key key, Val val) //make sure no identical key exists
 	{
 		LinkedList<Entry<Key,Val>> list = indexes.get(toIndex(key));
 		return list.add(new Entry<Key,Val>(key,val));
+	}
+	
+	public boolean remove(Key key)
+	{
+		return false;
 	}
 
 	public int getSize() 
@@ -73,6 +78,10 @@ public class HashTable<Key, Val> implements Serializable
 		return size;
 	}
 	
+	/*
+	 * Expands the size of the table, if there are many entries to one index, expanding the table will take a bit of time
+	 * but will greatly improve them preformance
+	 */
 	public void setSize(int newSize)
 	{
 		ArrayList<LinkedList<Entry<Key,Val>>> newBase = new ArrayList<LinkedList<Entry<Key,Val>>>(newSize);

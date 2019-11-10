@@ -1,13 +1,9 @@
 package server.user.base;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.security.hash.Fletcher16;
 
 import server.user.User;
+import server.user.base.table.HashTable;
 
 public final class UserBase implements Serializable
 {
@@ -20,11 +16,11 @@ public final class UserBase implements Serializable
 	
 	
 	private static final int numberOfBaseIndexs = 1000;
-	private HashMap<String, User> userLookup;
+	private HashTable<String, User> userLookup;
 	
 	public UserBase()
 	{
-		userLookup = new HashMap<String, User>(numberOfBaseIndexs);
+		userLookup = new HashTable<String, User>(numberOfBaseIndexs);
 	}
 	
 	public int pushUser(User user)
