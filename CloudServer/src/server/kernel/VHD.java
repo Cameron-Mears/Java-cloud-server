@@ -6,4 +6,10 @@ package server.kernel;
 public final class VHD 
 {
 	private long byteSize;
+	private String relPath;
+	
+	public String parseChangeDirect(String path)
+	{
+		return new String("Gamer");
+	}
 }

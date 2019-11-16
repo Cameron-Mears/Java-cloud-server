@@ -20,6 +20,7 @@ public final class SHA256
 	
 	public static byte[] doHash(byte[] in)
 	{
+		hash.reset();
 		return hash.digest(in);
 	}
 }

@@ -41,7 +41,18 @@ public final class Boot
 				
 				System.out.println(new String(SHA256.doHash(in.getBytes())));
 			}
+			System.out.println(atoi(in));
 		}
+	}
+	
+	public static int atoi(String in)
+	{
+		int result = 0;
+		for (int index = 0; index < in.length(); index++)
+		{
+			result += ((int)in.charAt(in.length() - index - 1) - 48) * (Math.pow(10, index));
+		}
+		return result;
 	}
 
 }

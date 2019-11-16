@@ -1,6 +1,6 @@
 package server.networking;
 
-import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class NetEvent
@@ -10,7 +10,7 @@ public class NetEvent
 	public static final int NEW_CONNECTION = 0;
 	
 	
-	private Inet6Address connectionAdr;
+	private InetAddress connectionAdr;
 	private int connectionPort;
 	private Socket socket;
 	private long evTimeMillis;
@@ -18,7 +18,16 @@ public class NetEvent
 	
 	
 	
-	public Inet6Address getConnectionAdr()
+	public NetEvent(Socket sock, int port, InetAddress adr, int type)
+	{
+		this.socket = sock;
+		this.type = type;
+		this.connectionAdr = adr;
+		this.connectionPort = port;
+		this.evTimeMillis = System.currentTimeMillis();
+	}
+	
+	public InetAddress getConnectionAdr()
 	{
 		return connectionAdr;
 	}

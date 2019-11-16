@@ -2,6 +2,8 @@ package server.networking;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Queue;
 
 public final class Server implements NetEventListener
 {
@@ -9,6 +11,8 @@ public final class Server implements NetEventListener
 	private ServerSocket serverSock;
 	private ConnectionHandler netEventHandle;
 	private ConnectionAcceptor conncetionAcceptor;
+	private Queue<ClientConnection> waitQueue;
+	private Thread acceptor;
 	
 	public Server()
 	{
@@ -22,15 +26,29 @@ public final class Server implements NetEventListener
 		{
 			
 		}
-			
+		
+		startAccepting();
+		
 	}
-
+	
+	private void startAccepting()
+	{
+		acceptor = new Thread(()->{
+			try
+			{
+				Socket connection = serverSock.accept();
+				ClientConnection cc = new ClientConnection(connection);
+			
+			} catch (IOException e) {}
+			
+		
+		});
+	}
 
 	@Override
 	public void newConnection(NetEvent e)
 	{
-		// TODO Auto-generated method stub
-		
+				
 	}
 
 
@@ -45,8 +63,7 @@ public final class Server implements NetEventListener
 	@Override
 	public void connnectionLost(NetEvent e)
 	{
-		// TODO Auto-generated method stub
-		
+				
 	}
 	
 	
