@@ -16,7 +16,7 @@ public class Client
 	{
 		try
 		{
-			SERVER_ADR = InetAddress.getByName("FRICK DYNAMIC IP");
+			SERVER_ADR = InetAddress.getByName("mears.ca");
 		} catch (UnknownHostException e1)
 		{
 			// TODO Auto-generated catch block

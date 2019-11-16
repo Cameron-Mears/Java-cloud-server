@@ -15,6 +15,32 @@ public class ClientConnection implements NetEventListener, SocketEventListener
 		this.sock = sock;
 		
 	}
+
+	@Override
+	public void socketHasData()
+	{
+				
+	}
+
+	@Override
+	public void newConnection(NetEvent e)
+	{
+				System.out.println("wow");
+	}
+
+	@Override
+	public void unexpectedConnnectionLost(NetEvent e)
+	{
+		
+		
+	}
+
+	@Override
+	public void connnectionLost(NetEvent e)
+	{
+		
+		
+	}
 	
 	
 	

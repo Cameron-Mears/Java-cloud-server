@@ -36,6 +36,7 @@ public class ConnectionHandler
 				{
 					NetEvent ev = new NetEvent(socketPair.sock, socketPair.sock.getLocalPort(), socketPair.sock.getInetAddress(), NetEvent.UNEXCEPTED_CONNECTION_LOSS);
 					socketPair.netListener.unexpectedConnnectionLost(ev);
+					listeners.remove(socketPair);
 				}
 				e.printStackTrace();
 			}
@@ -59,5 +60,10 @@ public class ConnectionHandler
 		pair.netListener = netlistner;
 		
 		return listeners.add(pair);
+	}
+	
+	public void terminate()
+	{
+		
 	}
 }

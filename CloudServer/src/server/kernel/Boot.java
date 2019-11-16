@@ -3,10 +3,9 @@ package server.kernel;
 
 import java.util.Scanner;
 
-import com.security.hash.Fletcher16;
 import com.security.hash.SHA256;
 
-import server.user.base.UserBase;
+import server.networking.Server;
 import server.user.base.table.HashTable;
 
 public final class Boot 
@@ -14,6 +13,7 @@ public final class Boot
 
 	public static void main(String[] args) 
 	{
+		Server server = new Server();
 		HashTable<String, Integer> test = new HashTable<String, Integer>(1);
 		for (int i = 0; i < 100; i ++)
 		{
@@ -24,7 +24,11 @@ public final class Boot
 		while (true)
 		{
 			String in = scan.next();
-			if (in.equals("exit")) System.exit(0);
+			if (in.equals("exit"))
+				{
+					server.terminateAllConnections();
+					System.exit(0);
+				}
 			if (in.equals("expand"))
 			{
 				long now = System.currentTimeMillis();

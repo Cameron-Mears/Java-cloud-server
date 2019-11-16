@@ -22,6 +22,7 @@ public class Decompressor
 		}
 		try {
 			decompress = new GZIPInputStream(fos);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

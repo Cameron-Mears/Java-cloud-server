@@ -1,23 +1,24 @@
 package server.networking;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Queue;
 
-public final class Server implements NetEventListener
+public final class Server 
 {
-	private int port;
+	private int port = 6969;
 	private ServerSocket serverSock;
-	private ConnectionHandler netEventHandle;
-	private ConnectionAcceptor conncetionAcceptor;
-	private Queue<ClientConnection> waitQueue;
+	private ConnectionHandler connectionHandler;
 	private Thread acceptor;
+	private boolean hasPort;
+	private boolean acceptNewConnections;
 	
 	public Server()
 	{
-		netEventHandle = new ConnectionHandler();
-		netEventHandle.addNetEventListener(this);
+		
+		connectionHandler = new ConnectionHandler();
 		
 		try
 		{
@@ -26,45 +27,73 @@ public final class Server implements NetEventListener
 		{
 			
 		}
+		hasPort = false;
 		
+		acceptNewConnections = true;
 		startAccepting();
+		System.out.println(acceptor.isAlive());
+		
 		
 	}
 	
 	private void startAccepting()
 	{
 		acceptor = new Thread(()->{
-			try
+			
+			while (acceptNewConnections)
 			{
-				Socket connection = serverSock.accept();
-				ClientConnection cc = new ClientConnection(connection);
-			
-			} catch (IOException e) {}
-			
+				try
+				{
+					System.out.println("Hi");
+					Socket connection = serverSock.accept();
+					ClientConnection cc = new ClientConnection(connection);
+					cc.newConnection(null);
+					synchronized (cc)
+					{
+						synchronized (connectionHandler)
+						{
+							connectionHandler.addConnection(connection, cc, cc);
+							cc.newConnection(new NetEvent(connection, port, connection.getInetAddress(), NetEvent.NEW_CONNECTION));
+						}
+					}
+					
+				} catch (IOException e) {}
+			}		
 		
 		});
+		acceptor.start();
 	}
-
-	@Override
-	public void newConnection(NetEvent e)
+	
+	
+	public void terminateAllConnections()
 	{
-				
+		this.connectionHandler.terminate();
+		try
+		{
+			serverSock.close();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
-
-	@Override
-	public void unexpectedConnnectionLost(NetEvent e)
+	
+	public void pauseAccepting()
 	{
-		// TODO Auto-generated method stub
-		
+		try
+		{
+			acceptor.wait();
+		} catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
 	}
-
-
-	@Override
-	public void connnectionLost(NetEvent e)
+	
+	public void continueAccepting()
 	{
-				
+		acceptor.notify();
 	}
+	
 	
 	
 	
