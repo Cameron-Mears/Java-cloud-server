@@ -1,12 +1,15 @@
 package server.networking;
 
 import java.net.Socket;
+import java.security.Key;
 
 import server.user.User;
 
 public class ClientConnection implements NetEventListener, SocketEventListener
 {
 	private Socket sock;
+	private String strkey;
+	private Key key;
 	
 	private User user;
 	
@@ -25,14 +28,13 @@ public class ClientConnection implements NetEventListener, SocketEventListener
 	@Override
 	public void newConnection(NetEvent e)
 	{
-				System.out.println("wow");
+		
 	}
 
 	@Override
 	public void unexpectedConnnectionLost(NetEvent e)
 	{
-		
-		
+				
 	}
 
 	@Override

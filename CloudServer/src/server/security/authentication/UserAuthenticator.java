@@ -6,20 +6,20 @@ import com.security.logon.LongOnRequest;
 import server.user.User;
 import server.user.base.UserBase;
 
-public final class UserAuthentication 
+public final class UserAuthenticator 
 {	
 	private UserBase userBase;
 	private static int hashTimes = 1000;
-	public UserAuthentication(UserBase base)
+	public UserAuthenticator(UserBase base)
 	{
-		
+		this.userBase = base;
 	}
 	
 	public User authenticateLogon(LongOnRequest request)
 	{
 		User usr = userBase.fetch(request.username);
 		byte[] passIn = (usr.getPassSalt().get() + request.password).getBytes();
-		if (usr == null)return null;
+		if (usr == null) return null;
 		
 		for (int hash = 0; hash < hashTimes; hash++) passIn = SHA256.doHash((new String(passIn) + (usr.getPassSalt().get() + request.password)).getBytes());
 		

@@ -31,9 +31,6 @@ public final class Server
 		
 		acceptNewConnections = true;
 		startAccepting();
-		System.out.println(acceptor.isAlive());
-		
-		
 	}
 	
 	private void startAccepting()
@@ -44,10 +41,8 @@ public final class Server
 			{
 				try
 				{
-					System.out.println("Hi");
 					Socket connection = serverSock.accept();
 					ClientConnection cc = new ClientConnection(connection);
-					cc.newConnection(null);
 					synchronized (cc)
 					{
 						synchronized (connectionHandler)

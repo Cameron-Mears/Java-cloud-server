@@ -7,12 +7,13 @@ import com.security.hash.SHA256;
 
 import server.networking.Server;
 import server.user.base.table.HashTable;
+import com.security.encryption.EncrytionEngine;
 
 public final class Boot 
 {
-
 	public static void main(String[] args) 
 	{
+		EncrytionEngine.getPublicKey();
 		Server server = new Server();
 		HashTable<String, Integer> test = new HashTable<String, Integer>(1);
 		for (int i = 0; i < 100; i ++)
