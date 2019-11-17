@@ -6,6 +6,8 @@ import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import com.networking.NetEvent;
+
 public final class Server 
 {
 	private int port = 6969;

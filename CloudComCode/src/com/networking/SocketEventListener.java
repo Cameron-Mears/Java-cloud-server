@@ -1,4 +1,4 @@
-package server.networking;
+package com.networking;
 
 public abstract interface SocketEventListener
 {

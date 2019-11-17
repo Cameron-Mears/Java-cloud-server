@@ -2,8 +2,11 @@ package server.networking;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.LinkedList;
+
+import com.networking.NetEvent;
+import com.networking.NetEventListener;
+import com.networking.SocketEventListener;
 
 
 
@@ -22,6 +25,16 @@ public class ConnectionHandler
 	
 	public void listen()
 	{
+		if (listeners.size() == 0)
+		{			
+			try
+			{
+				Thread.currentThread().wait();
+			} catch (InterruptedException e1)
+			{
+				e1.printStackTrace();
+			}
+		}
 		for (SocketPair socketPair : listeners)
 		{
 			try

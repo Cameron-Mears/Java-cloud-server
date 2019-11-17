@@ -1,4 +1,4 @@
-package server.networking;
+package com.networking;
 
 public interface NetEventListener
 {

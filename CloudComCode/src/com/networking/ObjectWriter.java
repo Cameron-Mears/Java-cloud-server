@@ -1,4 +1,4 @@
-package server.networking;
+package com.networking;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -7,9 +7,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-public class ByteArrayFormatter
+public class ObjectWriter
 {
-	public static byte[] serizalize(Serializable obj)
+	public static byte[] serizalize(Object obj)
 	{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ObjectOutputStream objStream = null;
@@ -32,6 +32,16 @@ public class ByteArrayFormatter
 	{
 		ByteArrayInputStream in = new ByteArrayInputStream(data);
 		ObjectInputStream objStream = null;
+		Object toReturn = null;
+		try
+		{
+			objStream = new ObjectInputStream(in);
+			toReturn = objStream.readObject();
+			objStream.close();
+		}
+		catch (IOException | ClassNotFoundException e) {e.printStackTrace();}
+		
+		return toReturn;
 		
 	}
 }

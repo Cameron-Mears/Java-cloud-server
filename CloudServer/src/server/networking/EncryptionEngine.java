@@ -1,6 +1,5 @@
-package com.security.encryption;
+package server.networking;
 
-import java.io.File;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -9,9 +8,7 @@ import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.filesys.JFile;
-
-public final class EncrytionEngine 
+public final class EncryptionEngine 
 {
 	private static final String MASTER_KEY = "hgT74GpZ1BNVCrqHSeTWfjtuXHQeu6WM";
 	
@@ -39,39 +36,10 @@ public final class EncrytionEngine
 		return publicKey;
 	}
 	
-	private static byte[] decrypt(byte[] in, String key)
+	public static Cipher getPrivateKey()
 	{
-		try
-		{
-			Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-	        Cipher cipher = Cipher.getInstance("AES");
-	        cipher.init(Cipher.DECRYPT_MODE, aesKey);
-	        return cipher.doFinal(in);
-		}
-		catch (Exception e)
-		{
-			
-		}
-		return null;
+		return privateKey;
 	}
-	
-	
-	private static byte[] encrypt(byte[] in, String key)
-	{
-		try
-		{
-			Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-	        Cipher cipher = Cipher.getInstance("AES");
-	        cipher.init(Cipher.ENCRYPT_MODE, aesKey);
-	        return cipher.doFinal(in);
-		}
-		catch (Exception e)
-		{
-			
-		}
-		return null;
-	}
-	
 	
 	
 	
