@@ -6,10 +6,11 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.UnknownHostException;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.Arrays;
+
+import javax.crypto.SealedObject;
 
 import com.networking.ObjectWriter;
 import com.security.encryption.Encryptor;
@@ -33,11 +34,11 @@ public class Client
 		thisThread = Thread.currentThread();
 		try
 		{
-			SERVER_ADR = InetAddress.getByName("google.ca");
+			SERVER_ADR = InetAddress.getByName("mears.ca");
 		
 				
 			sock = new Socket();
-			SocketAddress sockadr = new InetSocketAddress(SERVER_ADR, 80);
+			SocketAddress sockadr = new InetSocketAddress(SERVER_ADR, SERVER_DEFUALT_PORT);
 			
 			try
 			{
@@ -61,15 +62,14 @@ public class Client
 						{
 							if (sock.getInputStream().available() > 0)
 							{
-								synchronized (publicKey)
-								{
-									byte[] buf = new byte[10000];
-									int read = 0;
-									read = sock.getInputStream().read(buf);
-									byte[] key = Arrays.copyOf(buf, read);
-									this.publicKey = (PublicKey) ObjectWriter.deserialize(key);
-									timeout += 5000; //will auto timeout the loop
-								}
+				
+								byte[] buf = new byte[10000];
+								int read = 0;
+								read = sock.getInputStream().read(buf);
+								byte[] key = Arrays.copyOf(buf, read);
+								this.publicKey = (PublicKey) ObjectWriter.deserialize(key);
+								timeout -= 5000; //will auto timeout the loop
+								
 							}
 						} catch (IOException e) {e.printStackTrace();}
 					}
@@ -79,7 +79,6 @@ public class Client
 				if (publicKey == null)
 				{					
 					serverTimeouted = true;
-					this.thisThread.notify();
 				}			 
 				
 				
@@ -97,23 +96,24 @@ public class Client
 			byte[] keyPairByte = ObjectWriter.serizalize(keyPair);
 			byte[] encrypted = null;
 			
-			synchronized (publicKey)
+			long timeoutTime = System.currentTimeMillis() + 5000;
+			
+			while (timeoutTime > System.currentTimeMillis() && publicKey == null)
 			{
-				synchronized ((Object)serverTimeouted)
-				{
-					if (publicKey == null && !serverTimeouted)
-						thisThread.wait(); //waits for public key
-				}
+		
 			}
 			
-			if (serverTimeouted) throw new ServerUnavaibleException();
+			if (serverTimeouted)
+			{
+				throw new ServerUnavaibleException();
+			}
 			
-			encrypted = Encryptor.encrypt("AES", publicKey, keyPairByte); //encrypt packet
+			SealedObject obj = Encryptor.encrypt("RSA", publicKey, keyPair); //encrypt packet
 			
 			OutputStream sockStream = sock.getOutputStream();
+			encrypted = ObjectWriter.serizalize(obj);
 			sockStream.write(encrypted);
-			sockStream.flush();			
-			
+			sockStream.flush();
 		
 		}
 		catch (Exception e) 
