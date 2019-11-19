@@ -10,6 +10,7 @@ import com.networking.NetEvent;
 import com.networking.NetEventListener;
 import com.networking.ObjectWriter;
 import com.networking.SocketEventListener;
+import com.security.encryption.Encryptor;
 
 import server.user.User;
 
@@ -33,8 +34,7 @@ public class ClientConnection implements NetEventListener, SocketEventListener
 	public void socketHasData()
 	{
 		try
-		{
-			
+		{			
 		
 			if (!keysExchanged)
 			{
@@ -42,17 +42,16 @@ public class ClientConnection implements NetEventListener, SocketEventListener
 				byte[] keyBuf = new byte[10000];
 				int size = sock.getInputStream().read(keyBuf);
 				Arrays.copyOf(keyBuf, size);
-				keyPair = (KeyPair) ObjectWriter.deserialize(keyBuf);
-					
-				
+				keyPair = (KeyPair) ObjectWriter.deserialize(keyBuf);			
 			}
 			else
-			{
-				
+			{				
 				byte[] buffer = new byte[MAX_PACKET_SIZE];
 				int packetSize = sock.getInputStream().read(buffer);
-				
+				Encryptor.decrypt("AES", keyPair.getPrivate(), buffer);
 			}
+			
+			
 		}
 		catch (Exception e)
 		{
