@@ -5,12 +5,14 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.util.Scanner;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import com.networking.ObjectWriter;
 import com.security.encryption.Encryptor;
 import com.security.encryption.KeyFactory;
 
@@ -23,6 +25,8 @@ public final class Boot
 	{
 		Server server = new Server();
 		KeyPair test1 = KeyFactory.generateNewRSAPair();
+		PublicKey Test = test1.getPublic();
+		System.out.println(Test.getEncoded().length);
 		Encryptor.encrypt("RSA", test1.getPublic(), new String("sd"));
 		HashTable<String, Integer> test = new HashTable<String, Integer>(1);
 		for (int i = 0; i < 100; i ++)
