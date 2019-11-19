@@ -2,54 +2,68 @@ package server.networking;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.security.Key;
-
-import javax.crypto.Cipher;
+import java.security.KeyPair;
+import java.security.PublicKey;
+import java.util.Arrays;
 
 import com.networking.NetEvent;
 import com.networking.NetEventListener;
 import com.networking.ObjectWriter;
 import com.networking.SocketEventListener;
+
 import server.user.User;
 
 public class ClientConnection implements NetEventListener, SocketEventListener
 {
+	private static final int MAX_PACKET_SIZE = 10000000;
 	private Socket sock;
 	private String strkey;
-	private Key commonKey;
+	private PublicKey pubKey;
+	private KeyPair keyPair;
 	private boolean keysExchanged = false;
 	private User user;
 	
-	public ClientConnection(Socket sock)
+	public ClientConnection(Socket sock, PublicKey key)
 	{
 		this.sock = sock;
-		
+		this.pubKey = key;
 	}
 
 	@Override
 	public void socketHasData()
 	{
-		if (!keysExchanged)
-		{
-			try
-			{
-				byte[] keyBuf = new byte[1000];
-				int size = sock.getInputStream().read(keyBuf);
-				Cipher pub = EncryptionEngine.getPublicKey();
-			}
-			catch (Exception e) {}	
-		}
-		else
+		try
 		{
 			
+		
+			if (!keysExchanged)
+			{
+				
+				byte[] keyBuf = new byte[10000];
+				int size = sock.getInputStream().read(keyBuf);
+				Arrays.copyOf(keyBuf, size);
+				keyPair = (KeyPair) ObjectWriter.deserialize(keyBuf);
+					
+				
+			}
+			else
+			{
+				
+				byte[] buffer = new byte[MAX_PACKET_SIZE];
+				int packetSize = sock.getInputStream().read(buffer);
+				
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public void newConnection(NetEvent ev) //send public key
 	{
-		Cipher pub = EncryptionEngine.getPublicKey();
-		byte[] message = ObjectWriter.serizalize(pub);
+		byte[] message = ObjectWriter.serizalize(pubKey);
 		try
 		{
 			sock.getOutputStream().write(message);

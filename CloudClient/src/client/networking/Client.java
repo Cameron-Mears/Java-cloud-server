@@ -1,17 +1,18 @@
 package client.networking;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.UnknownHostException;
-import java.security.Key;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
+import java.security.KeyPair;
+import java.security.PublicKey;
+import java.util.Arrays;
 
 import com.networking.ObjectWriter;
-import com.security.encryption.EncrytionEngine;
+import com.security.encryption.Encryptor;
 import com.security.encryption.KeyFactory;
 
 public class Client
@@ -19,57 +20,112 @@ public class Client
 	private static final int SERVER_DEFUALT_PORT = 6969;
 	private static  InetAddress SERVER_ADR;
 	private Socket sock;
-	private Key commonKey;
-	public Client()
+	private PublicKey publicKey = null;
+	private KeyPair keyPair;
+	private long timeout = 5000;
+	private boolean serverTimeouted = false;
+	private boolean keyExchanged = false;
+	private Thread thisThread;
+	
+	public Client() throws ServerUnavaibleException 
 	{
+		
+		thisThread = Thread.currentThread();
 		try
 		{
-			SERVER_ADR = InetAddress.getByName("mears.ca");
-		} catch (UnknownHostException e1)
-		{
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		IOException connectionError;
+			SERVER_ADR = InetAddress.getByName("google.ca");
 		
-		int port = SERVER_DEFUALT_PORT;
-		do
-		{
-			connectionError = null;
+				
+			sock = new Socket();
+			SocketAddress sockadr = new InetSocketAddress(SERVER_ADR, 80);
 			
 			try
 			{
-				sock = new Socket(SERVER_ADR, port);
-			} catch (IOException e)
+				sock.connect(sockadr, (int)5000);
+			}
+			catch (Exception e)
 			{
-				connectionError = e;
-				port++;
+				throw new ServerUnavaibleException();
 			}
 			
-			byte[] readKey = new byte[32]; //buffer for aeskey256
 			
-			try
-			{
-				sock.getInputStream().read(readKey);
-			} catch (IOException e) {}
-			
-			Cipher publicKey = (Cipher) ObjectWriter.deserialize(readKey);
-			
-			commonKey = KeyFactory.generateNewAES256();
-			byte[] keyToByte = ObjectWriter.serizalize(commonKey);
-			try
-			{
-				publicKey.doFinal(keyToByte);
-				sock.getOutputStream().write(keyToByte);
-				sock.getOutputStream().flush();
+			new Thread(()->{
 				
-			} catch (IllegalBlockSizeException | BadPaddingException | IOException e) {}
+				long timeout = System.currentTimeMillis() + this.timeout;
+				
+				while (timeout > System.currentTimeMillis())
+				{
+					synchronized (sock)
+					{
+						try
+						{
+							if (sock.getInputStream().available() > 0)
+							{
+								synchronized (publicKey)
+								{
+									byte[] buf = new byte[10000];
+									int read = 0;
+									read = sock.getInputStream().read(buf);
+									byte[] key = Arrays.copyOf(buf, read);
+									this.publicKey = (PublicKey) ObjectWriter.deserialize(key);
+									timeout += 5000; //will auto timeout the loop
+								}
+							}
+						} catch (IOException e) {e.printStackTrace();}
+					}
+					
+				}
+				
+				if (publicKey == null)
+				{					
+					serverTimeouted = true;
+					this.thisThread.notify();
+				}			 
+				
+				
+				
+			}).start(); //waits to accept public key from server
 			
 			
+			//do everything else
 			
-		}
-		while (connectionError != null);
+			//viewer.init() etc..
+			
+			
+			keyPair = KeyFactory.generateNewRSAPair();
+			
+			byte[] keyPairByte = ObjectWriter.serizalize(keyPair);
+			byte[] encrypted = null;
+			
+			synchronized (publicKey)
+			{
+				synchronized ((Object)serverTimeouted)
+				{
+					if (publicKey == null && !serverTimeouted)
+						thisThread.wait(); //waits for public key
+				}
+			}
+			
+			if (serverTimeouted) throw new ServerUnavaibleException();
+			
+			encrypted = Encryptor.encrypt("AES", publicKey, keyPairByte); //encrypt packet
+			
+			OutputStream sockStream = sock.getOutputStream();
+			sockStream.write(encrypted);
+			sockStream.flush();			
+			
 		
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public KeyPair getEncryptionPair()
+	{
+		return keyPair;
 	}
 	
 	public void read()

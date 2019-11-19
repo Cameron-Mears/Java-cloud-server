@@ -1,19 +1,27 @@
 package com.security.encryption;
 
-import java.security.Key;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 
-import javax.crypto.spec.SecretKeySpec;
 
+/*
+ * System will use aes256 for storage on the server itself, and use rsa for receving and transmitted data
+ */
 public final class KeyFactory
 {
-	public static Key generateNewAES256()
+	public static KeyPair generateNewRSAPair()
 	{
-		byte[] chars = new byte[32];
-		for (int index = 0; index < chars.length; index++)
+		KeyPairGenerator keygen = null;
+		try
 		{
-			chars[index] = (byte)(Math.random() * 256);
-		}
-	
-		return new SecretKeySpec(chars, "AES");
+			keygen = KeyPairGenerator.getInstance("RSA");
+		} catch (NoSuchAlgorithmException e) {e.printStackTrace();}
+		if (keygen != null) keygen.initialize(2048);
+		else return null;
+		
+		KeyPair pair = keygen.generateKeyPair();
+		return pair;
+		
 	}
 }

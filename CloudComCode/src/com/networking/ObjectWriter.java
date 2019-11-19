@@ -5,7 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.net.Socket;
 
 public class ObjectWriter
 {
@@ -42,6 +42,19 @@ public class ObjectWriter
 		catch (IOException | ClassNotFoundException e) {e.printStackTrace();}
 		
 		return toReturn;
+		
+	}
+	
+	public static void sendObject(Socket sock, Object obj)
+	{
+		byte[] out = serizalize(obj);
+		try
+		{
+			
+			sock.getOutputStream().write(out);
+			sock.getOutputStream().flush();
+		}
+		catch(Exception e) {e.printStackTrace();}
 		
 	}
 }
