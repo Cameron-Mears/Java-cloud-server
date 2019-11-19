@@ -1,18 +1,29 @@
 package server.kernel;
 
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
-import com.security.hash.SHA256;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+import com.security.encryption.Encryptor;
+import com.security.encryption.KeyFactory;
 
 import server.networking.Server;
 import server.user.base.table.HashTable;
 
 public final class Boot 
 {
-	public static void main(String[] args) 
+	public static void main(String[] args) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, IOException 
 	{
 		Server server = new Server();
+		KeyPair test1 = KeyFactory.generateNewRSAPair();
+		Encryptor.encrypt("RSA", test1.getPublic(), new String("sd"));
 		HashTable<String, Integer> test = new HashTable<String, Integer>(1);
 		for (int i = 0; i < 100; i ++)
 		{
@@ -20,32 +31,7 @@ public final class Boot
 			test.put(name, i);
 		}
 		Scanner scan = new Scanner(System.in);
-		while (true)
-		{
-			String in = scan.next();
-			if (in.equals("exit"))
-				{
-					server.terminateAllConnections();
-					System.exit(0);
-				}
-			if (in.equals("expand"))
-			{
-				long now = System.currentTimeMillis();
-				test.setSize(scan.nextInt());
-				System.out.println(System.currentTimeMillis()-now);
-			}
-			else
-			{
-				long now = System.currentTimeMillis();
-				Integer i = test.get(in);
-				System.out.println(System.currentTimeMillis()-now);
-				if (i == null) System.out.println("No Value at Index");
-				else System.out.println(i);
-				
-				System.out.println(new String(SHA256.doHash(in.getBytes())));
-			}
-			System.out.println(atoi(in));
-		}
+		
 	}
 	
 	public static int atoi(String in)

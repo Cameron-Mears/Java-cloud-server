@@ -14,27 +14,18 @@ public class ConnectionHandler
 {
 	
 	private LinkedList<SocketPair> listeners;
-	
+	private Thread thisThread;
 	
 	private class SocketPair
 	{
 		Socket sock;
 		SocketEventListener sockListener;
 		NetEventListener netListener;
+		long connectionID;
 	}
 	
 	public void listen()
 	{
-		if (listeners.size() == 0)
-		{			
-			try
-			{
-				Thread.currentThread().wait();
-			} catch (InterruptedException e1)
-			{
-				e1.printStackTrace();
-			}
-		}
 		for (SocketPair socketPair : listeners)
 		{
 			try
@@ -58,11 +49,17 @@ public class ConnectionHandler
 	}
 	
 	
+	
 	public ConnectionHandler()
 	{
 		listeners = new LinkedList<SocketPair>();
+		thisThread = Thread.currentThread();
 	}
 	
+	public int getActiveConnections()
+	{
+		return listeners.size();
+	}
 	
 	
 	public boolean addConnection(Socket sock, SocketEventListener sockListener, NetEventListener netlistner)
@@ -71,8 +68,14 @@ public class ConnectionHandler
 		pair.sock = sock;
 		pair.sockListener = sockListener;
 		pair.netListener = netlistner;
+		pair.connectionID = (long) (Math.random() * Long.MAX_VALUE);
 		
 		return listeners.add(pair);
+	}
+	
+	public Thread getThread()
+	{
+		return thisThread;
 	}
 	
 	public void terminate()

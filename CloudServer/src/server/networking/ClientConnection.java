@@ -6,9 +6,12 @@ import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.Arrays;
 
+import javax.crypto.SealedObject;
+
 import com.networking.NetEvent;
 import com.networking.NetEventListener;
 import com.networking.ObjectWriter;
+import com.networking.Packet;
 import com.networking.SocketEventListener;
 import com.security.encryption.Encryptor;
 
@@ -48,7 +51,10 @@ public class ClientConnection implements NetEventListener, SocketEventListener
 			{				
 				byte[] buffer = new byte[MAX_PACKET_SIZE];
 				int packetSize = sock.getInputStream().read(buffer);
-				Encryptor.decrypt("AES", keyPair.getPrivate(), buffer);
+				byte[] packet = Arrays.copyOf(buffer, packetSize);
+				
+				SealedObject obj = (SealedObject) ObjectWriter.deserialize(packet);
+				Packet p = (Packet) Encryptor.decrypt("AES", keyPair.getPrivate(), obj);
 			}
 			
 			
@@ -63,18 +69,20 @@ public class ClientConnection implements NetEventListener, SocketEventListener
 	public void newConnection(NetEvent ev) //send public key
 	{
 		byte[] message = ObjectWriter.serizalize(pubKey);
+		
 		try
 		{
 			sock.getOutputStream().write(message);
 			sock.getOutputStream().flush();
-		} catch(IOException e) {}
+			System.out.println("Message Sent");
+		} catch(IOException e) {e.printStackTrace();}
 		
 	}
 
 	@Override
 	public void unexpectedConnnectionLost(NetEvent e)
 	{
-				
+		System.out.println("Yo");
 	}
 
 	@Override

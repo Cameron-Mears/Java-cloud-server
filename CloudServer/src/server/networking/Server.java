@@ -18,8 +18,10 @@ public final class Server
 	private ServerSocket serverSock;
 	private ConnectionHandler connectionHandler;
 	private Thread acceptor;
+	private Thread server;
 	private boolean hasPort;
 	private boolean acceptNewConnections;
+	private boolean running;
 	
 	private KeyPair keyPair;
 	private PublicKey pubKey;
@@ -45,6 +47,7 @@ public final class Server
 		
 		acceptNewConnections = true;
 		startAccepting();
+		loop();
 	}
 	
 	private void startAccepting()
@@ -60,10 +63,21 @@ public final class Server
 					synchronized (cc)
 					{
 						synchronized (connectionHandler)
-						{
+						{						
 							connectionHandler.addConnection(connection, cc, cc);
-							cc.newConnection(new NetEvent(connection, port, connection.getInetAddress(), NetEvent.NEW_CONNECTION));
+							
+							new Thread(()->{
+								cc.newConnection(new NetEvent(connection, port, connection.getInetAddress(), NetEvent.NEW_CONNECTION));
+							}).start();
 						}
+						
+						synchronized (server)
+						{
+							server.notify();
+						}
+						
+						
+						
 					}
 					
 				} catch (IOException e) {}
@@ -71,6 +85,38 @@ public final class Server
 		
 		});
 		acceptor.start();
+	}
+	
+	
+	public void loop()
+	{
+		server = new Thread(()->{
+			
+			Thread thisThread = Thread.currentThread();
+			
+			while (running)
+			{
+				int connections = 0;
+				synchronized (connectionHandler)
+				{
+					connections = connectionHandler.getActiveConnections();
+				}
+				
+				
+				if (connections == 0)
+				{
+					try
+					{
+						thisThread.wait();
+					} catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+			
+		});
+		server.start();
 	}
 	
 	
