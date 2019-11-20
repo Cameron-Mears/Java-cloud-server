@@ -71,10 +71,7 @@ public final class Server
 							}).start();
 						}
 						
-						synchronized (server)
-						{
-							server.notify();
-						}
+						
 						
 						
 						
@@ -90,33 +87,10 @@ public final class Server
 	
 	public void loop()
 	{
-		server = new Thread(()->{
-			
-			Thread thisThread = Thread.currentThread();
-			
-			while (running)
-			{
-				int connections = 0;
-				synchronized (connectionHandler)
-				{
-					connections = connectionHandler.getActiveConnections();
-				}
-				
-				
-				if (connections == 0)
-				{
-					try
-					{
-						thisThread.wait();
-					} catch (InterruptedException e)
-					{
-						e.printStackTrace();
-					}
-				}
-			}
-			
-		});
-		server.start();
+		while (true)
+		{
+			connectionHandler.listen();
+		}
 	}
 	
 	

@@ -53,8 +53,15 @@ public class ClientConnection implements NetEventListener, SocketEventListener
 				int size = sock.getInputStream().read(keyBuf);
 				Arrays.copyOf(keyBuf, size);
 				SealedObject aes = (SealedObject) ObjectWriter.deserialize(keyBuf);
+				System.out.println(aes.getAlgorithm());
 				aesKey = (SecretKey) aes.getObject(privKey);
 				System.out.println("keyreceived");
+				byte[] test = aesKey.getEncoded();
+				for (byte b : test)
+				{
+					System.out.println(Byte.toString(b) + " ");
+				}
+				keysExchanged = true;
 			}
 			else
 			{				
