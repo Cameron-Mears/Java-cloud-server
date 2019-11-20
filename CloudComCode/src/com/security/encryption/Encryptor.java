@@ -17,16 +17,17 @@ import javax.crypto.SealedObject;
 public final class Encryptor
 {
 	private static final int RSA_BLOCK_SIZE = 256;
-	public static SealedObject encrypt(String algorithm, PublicKey key, Serializable obj) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, IOException
+	
+	public static SealedObject encryptRSA(PublicKey key, Serializable obj) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, IOException
 	{
-		Cipher cipher = Cipher.getInstance(algorithm);
+		Cipher cipher = Cipher.getInstance("RSA");
 		cipher.init(Cipher.ENCRYPT_MODE, key);
 		return new SealedObject(obj, cipher);
 	}
 	
-	public static Object decrypt(String algorithm, PrivateKey key, SealedObject obj) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, IOException, ClassNotFoundException
+	public static Object decryptRSA(PrivateKey key, SealedObject obj) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, IOException, ClassNotFoundException
 	{
-		Cipher cipher = Cipher.getInstance(algorithm);
+		Cipher cipher = Cipher.getInstance("RSA");
 		cipher.init(Cipher.DECRYPT_MODE, key);
 	
 		return obj.getObject(cipher);

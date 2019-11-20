@@ -10,7 +10,11 @@ import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.Arrays;
 
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.SealedObject;
+import javax.crypto.SecretKey;
 
 import com.networking.ObjectWriter;
 import com.security.encryption.Encryptor;
@@ -22,10 +26,12 @@ public class Client
 	private static  InetAddress SERVER_ADR;
 	private Socket sock;
 	private PublicKey publicKey = null;
-	private KeyPair keyPair;
+	private SecretKey aesKey;
 	private long timeout = 5000;
 	private boolean serverTimeouted = false;
 	private boolean keyExchanged = false;
+	private CipherInputStream sockIn;
+	private CipherOutputStream sockOut;
 	private Thread thisThread;
 	
 	public Client() throws ServerUnavaibleException 
@@ -91,9 +97,7 @@ public class Client
 			//viewer.init() etc..
 			
 			
-			keyPair = KeyFactory.generateNewRSAPair();
-			
-			byte[] keyPairByte = ObjectWriter.serizalize(keyPair);
+			byte[] keyPairByte = ObjectWriter.serizalize(aesKey);
 			byte[] encrypted = null;
 			
 			long timeoutTime = System.currentTimeMillis() + 5000;
@@ -108,12 +112,13 @@ public class Client
 				throw new ServerUnavaibleException();
 			}
 			
-			SealedObject obj = Encryptor.encrypt("RSA", publicKey, keyPair); //encrypt packet
+			aesKey = KeyFactory.generateAES256();
 			
-			OutputStream sockStream = sock.getOutputStream();
-			encrypted = ObjectWriter.serizalize(obj);
-			sockStream.write(encrypted);
-			sockStream.flush();
+			SealedObject obj = Encryptor.encryptRSA(publicKey, aesKey); //encrypt packet
+			sock.getOutputStream().write(ObjectWriter.serizalize(obj));
+			sock.getOutputStream().flush();
+			System.out.print("KEYSENT");
+			
 		
 		}
 		catch (Exception e) 
@@ -123,10 +128,6 @@ public class Client
 		
 	}
 	
-	public KeyPair getEncryptionPair()
-	{
-		return keyPair;
-	}
 	
 	public void read()
 	{

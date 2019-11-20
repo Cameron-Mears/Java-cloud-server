@@ -59,7 +59,7 @@ public final class Server
 				try
 				{
 					Socket connection = serverSock.accept();
-					ClientConnection cc = new ClientConnection(connection, pubKey);
+					ClientConnection cc = new ClientConnection(connection);
 					synchronized (cc)
 					{
 						synchronized (connectionHandler)
