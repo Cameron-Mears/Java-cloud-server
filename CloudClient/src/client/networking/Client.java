@@ -117,7 +117,14 @@ public class Client
 			SealedObject obj = Encryptor.encryptRSA(publicKey, aesKey); //encrypt packet
 			sock.getOutputStream().write(ObjectWriter.serizalize(obj));
 			sock.getOutputStream().flush();
+			byte[] b = aesKey.getEncoded();
+			for (byte c : b) 
+			{
+				System.out.println(c);
+			}
 			System.out.print("KEYSENT");
+			
+			
 			
 		
 		}
