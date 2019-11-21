@@ -6,7 +6,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -35,18 +34,28 @@ public final class KeyFactory
 	
 	public static SecretKey generateAES256()
 	{
-		SecureRandom rand = new SecureRandom();
-		KeyGenerator keygen = null;
 		try
 		{
-			keygen = KeyGenerator.getInstance("AES");
-		} catch (NoSuchAlgorithmException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			SecureRandom rand = new SecureRandom();
+			
+			StringBuilder sbkey = new StringBuilder();
+			StringBuilder sbsalt = new StringBuilder();
+			for (int n = 0; n < 32; n ++)
+			{
+				sbkey.append(rand.nextDouble() * 256);
+				sbsalt.append(rand.nextDouble() * 256);
+			}
+			String key = sbkey.toString();
+			String salt = sbsalt.toString();
+			SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+			KeySpec spec = new PBEKeySpec(key.toCharArray(), salt.getBytes(), 65536, 256);
+			SecretKey tmp = factory.generateSecret(spec);
+			SecretKey secret = new SecretKeySpec(tmp.getEncoded(), "AES");
+	
+			return secret;
 		}
-		keygen.init(256, rand);
-		SecretKey key = keygen.generateKey();
-		return key;
+		catch (Exception e) {e.printStackTrace();}
+		
+		return null;
 	}
 }

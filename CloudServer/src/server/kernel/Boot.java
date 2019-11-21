@@ -1,30 +1,38 @@
 package server.kernel;
 
 
+import java.io.File;
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.InvalidParameterSpecException;
 import java.util.Scanner;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 
-import com.networking.ObjectWriter;
-import com.security.encryption.Encryptor;
+import com.security.encryption.AES256;
 import com.security.encryption.KeyFactory;
 
-import server.networking.Server;
+import server.networking.EncryptionEngine;
 import server.user.base.table.HashTable;
 
 public final class Boot 
 {
-	public static void main(String[] args) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, IOException 
-	{
+	
+	public static void main(String[] args) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeySpecException, InvalidParameterSpecException, InvalidAlgorithmParameterException 
+	{	
 		
-		Server server = new Server();
+		SecretKey secret = KeyFactory.generateAES256();
+		File file = new File("F:\\servertestfoler\\Tempary Wheel Adapter v6.stl");
+		byte[] iv = EncryptionEngine.encryptFile(secret, file);
+		EncryptionEngine.decryptFile(secret, new File("F:\\servertestfoler\\Tempary Wheel Adapter v6.stl.serverEncrypt"), iv);
+		
+		//Server server = new Server();
 		HashTable<String, Integer> test = new HashTable<String, Integer>(1);
 		for (int i = 0; i < 100; i ++)
 		{

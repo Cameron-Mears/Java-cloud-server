@@ -1,16 +1,13 @@
 package client.networking;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.Arrays;
 
-import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.SealedObject;
@@ -48,7 +45,7 @@ public class Client
 			
 			try
 			{
-				sock.connect(sockadr, (int)5000);
+				sock.connect(sockadr, 5000);
 			}
 			catch (Exception e)
 			{

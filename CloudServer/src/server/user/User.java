@@ -13,6 +13,9 @@ public class User
 	private String hashedPass;
 	private Salt passSalt;
 	private String email;
+	private String recoveryCode;
+	private byte[] hashedKey; //used to validate user recovery key
+	private String sessionAuthenicateCode;
 	private VHD data;
 	private int computeCredits;
 	private int accountSecurityLevel;
