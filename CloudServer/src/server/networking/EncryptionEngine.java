@@ -22,7 +22,7 @@ import com.filesys.JFile;
 
 public final class EncryptionEngine 
 {
-	private static final int MAX_BUFFER_SIZE = 16777216; //167MB (multiple of 128 (block size))
+	private static final int MAX_BUFFER_SIZE = (int) Math.pow(2, 28); //167MB (multiple of 128 (block size))
 	private static final int ENCRYPTION_BLOCK = 16; //16 bytes per block
 	private static final double BLOCK_SIZE = 16.0;
 	
@@ -103,7 +103,7 @@ public final class EncryptionEngine
 		byte[] fileBuffer = new byte[MAX_BUFFER_SIZE];
 		int read = 0;
 		//File encrpytedStore = new File(file.getAbsoluteFile() + ".serverEncrypt");
-		FileOutputStream fos = new FileOutputStream("F:\\servertestfoler\\test.stl");
+		FileOutputStream fos = new FileOutputStream("C:\\Users\\Cameron\\Videos\\Counter-strike  Global Offensive\\Counter-strike  Global Offensive 2018.12.14 - 16.16.54.09.DV1R.mp4");
 		do
 		{
 			int pos = 0;
@@ -135,14 +135,13 @@ public final class EncryptionEngine
 			{
 				cis.read(encryptionBlock);
 				fos.write(encryptionBlock);
-				cis.read(encryptionBlock);
-				fos.write(encryptionBlock);
 			}
 		}
 		while(read == MAX_BUFFER_SIZE);
 		
-		fos.flush();
 		
+		fos.flush();
+		fos.close();
 		return null;
 	}
 }

@@ -24,13 +24,13 @@ import server.user.base.table.HashTable;
 public final class Boot 
 {
 	
-	public static void main(String[] args) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeySpecException, InvalidParameterSpecException, InvalidAlgorithmParameterException 
+	public static void main(String[] args) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeySpecException, InvalidParameterSpecException, InvalidAlgorithmParameterException, InterruptedException 
 	{	
 		
 		SecretKey secret = KeyFactory.generateAES256();
-		File file = new File("F:\\servertestfoler\\Tempary Wheel Adapter v6.stl");
+		File file = new File("C:\\Users\\Cameron\\Videos\\Desktop\\Desktop 2019.06.19 - 19.05.49.01.mp4");
 		byte[] iv = EncryptionEngine.encryptFile(secret, file);
-		EncryptionEngine.decryptFile(secret, new File("F:\\servertestfoler\\Tempary Wheel Adapter v6.stl.serverEncrypt"), iv);
+		EncryptionEngine.decryptFile(secret, new File("C:\\Users\\Cameron\\Videos\\Desktop\\Desktop 2019.06.19 - 19.05.49.01.mp4.serverEncrypt"), iv);
 		
 		//Server server = new Server();
 		HashTable<String, Integer> test = new HashTable<String, Integer>(1);
