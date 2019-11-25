@@ -1,16 +1,19 @@
 package server.networking;
 
 import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -22,7 +25,7 @@ import com.filesys.JFile;
 
 public final class EncryptionEngine 
 {
-	private static final int MAX_BUFFER_SIZE = (int) Math.pow(2, 28); //167MB (multiple of 128 (block size))
+	private static final int MAX_BUFFER_SIZE = (int) Math.pow(2, 25); //167MB (multiple of 128 (block size))
 	private static final int ENCRYPTION_BLOCK = 16; //16 bytes per block
 	private static final double BLOCK_SIZE = 16.0;
 	
@@ -43,45 +46,57 @@ public final class EncryptionEngine
 		cipher.init(Cipher.ENCRYPT_MODE, aesKey);
 		byte[] iv = cipher.getParameters().getParameterSpec(IvParameterSpec.class).getIV();
 		byte[] fileBuffer = new byte[MAX_BUFFER_SIZE];
-		int read = 0;
 		
-		String path = file.getAbsoluteFile() + ".serverEncrypt";
-		int addedPadding = 0;
+	
+		FileOutputStream fos = new FileOutputStream(file.getAbsoluteFile() + ".svref");
 		
-		//File encrpytedStore = new File(file.getAbsoluteFile() + ".serverEncrypt");
-		FileOutputStream fos = new FileOutputStream(file.getAbsoluteFile() + ".serverEncrypt");
-		
-		do
+		boolean loopFlag = true;
+		while (loopFlag)
 		{
-			read = stream.read(fileBuffer);
-			ByteArrayInputStream bis = new ByteArrayInputStream(fileBuffer);
+			int read = stream.read(fileBuffer, ENCRYPTION_BLOCK, MAX_BUFFER_SIZE - ENCRYPTION_BLOCK); //read core of buffer, start notes size end of buffer is added Padding
+			
+			int numChunks = (int)(Math.ceil(read/16.0D));
+			System.out.println(numChunks);
+			byte[] numChunksBytes = ByteBuffer.allocate(Integer.BYTES).putInt(numChunks).array();	
+			
+			memcpy(numChunksBytes, fileBuffer, Integer.BYTES); //copy number of chunks to start of buffer
+			
+			int paddingToAdd = ENCRYPTION_BLOCK - (read % ENCRYPTION_BLOCK);
+			System.out.println(paddingToAdd);
+			
+			fileBuffer[ENCRYPTION_BLOCK + (ENCRYPTION_BLOCK * numChunks)-1] = (byte) paddingToAdd;
+			
+			ByteArrayInputStream bis = new ByteArrayInputStream(fileBuffer, 0, ENCRYPTION_BLOCK*2 + (ENCRYPTION_BLOCK * numChunks));
 			CipherInputStream cis = new CipherInputStream(bis, cipher);
-			if (read < MAX_BUFFER_SIZE);
-			{
-				addedPadding = ENCRYPTION_BLOCK - (read % ENCRYPTION_BLOCK);
-			}
-			int blocks = (int) (Math.ceil(read/BLOCK_SIZE));
-			byte[] encryptionBlock = new byte[ENCRYPTION_BLOCK];
 			
-			for (int block = 0; block < blocks; block++)
+			for (int block = 0; block < numChunks + 2; block ++)
 			{
-				cis.read(encryptionBlock);
-				fos.write(encryptionBlock);
+				System.out.println(block);
+				byte[] buf = new byte[ENCRYPTION_BLOCK];
+				cis.read(buf);
+				fos.write(buf);
 			}
-			if (read < MAX_BUFFER_SIZE) //adds blocks that shows additional padding
-			{
-				byte[] end = new byte[ENCRYPTION_BLOCK];
-				end[12] = (byte) addedPadding;
-				fos.write(end);
-			}
+			cis.close();
+			bis.close();
 			
+			
+			if (stream.available() <= 0) loopFlag = false;
 		}
-		while(read == MAX_BUFFER_SIZE);
 		
-		
+		stream.close();
 		fos.flush();
+		fos.close();
 		
 		return iv;
+	}
+	
+	
+	private static void memcpy(byte[] source, byte[] dest, int numBytes)
+	{
+		for (int index = 0; index < numBytes; index ++)
+		{
+			dest[index] = source[index];
+		}
 	}
 	
 	public static File decryptFile(SecretKey aesKey, File file, byte[] iv) throws InvalidKeyException, FileNotFoundException, NoSuchAlgorithmException, NoSuchPaddingException, IOException, InvalidParameterSpecException, InvalidAlgorithmParameterException
@@ -101,44 +116,37 @@ public final class EncryptionEngine
 		cipher.init(Cipher.DECRYPT_MODE, aesKey, new IvParameterSpec(iv));
 		
 		byte[] fileBuffer = new byte[MAX_BUFFER_SIZE];
-		int read = 0;
 		//File encrpytedStore = new File(file.getAbsoluteFile() + ".serverEncrypt");
-		FileOutputStream fos = new FileOutputStream("C:\\Users\\Cameron\\Videos\\Counter-strike  Global Offensive\\Counter-strike  Global Offensive 2018.12.14 - 16.16.54.09.DV1R.mp4");
-		do
+		FileOutputStream fos = new FileOutputStream("F:\\servertestfoler\\test.jpg");
+		
+		boolean flag = true;
+		
+		while (flag)
 		{
-			int pos = 0;
-			read = stream.read(fileBuffer);
+			int read = stream.read(fileBuffer);
+			
 			ByteArrayInputStream bis = new ByteArrayInputStream(fileBuffer);
 			CipherInputStream cis = new CipherInputStream(bis, cipher);
-			int blocks = (int) (Math.ceil(read/BLOCK_SIZE));
-			byte[] encryptionBlock = new byte[ENCRYPTION_BLOCK];
+			byte[] block = new byte[ENCRYPTION_BLOCK];
 			
+			cis.read(block);
 			
-			for (int block = 0; block < blocks - 2; block++) //last 2 blocks need to read differently
+			int numChunks = ByteBuffer.wrap(block,0,4).getInt(); //get nunber of chunks in buffer
+			
+			byte[] buf = new byte[ENCRYPTION_BLOCK];
+			for (int n = 0; n < numChunks-1; n ++)
 			{
-				cis.read(encryptionBlock);
-				fos.write(encryptionBlock);
-				pos += 16;
+				cis.read(buf);
+				fos.write(buf);
 			}
 			
-			if (read < MAX_BUFFER_SIZE)//only if end of file 
-			{
-				cis.read(encryptionBlock); //read last block normally				
-				pos += 16;
-				byte[] footer = Arrays.copyOfRange(fileBuffer, pos, pos + 15);
-				int padding = (int)footer[12]; //get added padding from end of file
-				System.out.println(padding);
-				
-				fos.write(encryptionBlock, 0, 16 - padding);
-			}
-			else //if not end file read the last 2 blocks in buffer
-			{
-				cis.read(encryptionBlock);
-				fos.write(encryptionBlock);
-			}
+			cis.read(buf); //last actual chunk
+			byte[] paddingInfo = new byte[ENCRYPTION_BLOCK];
+			cis.read(paddingInfo);
+			fos.write(buf, 0, ENCRYPTION_BLOCK - (int)paddingInfo[0]);
+			
+			if (stream.available() <= 0) flag = false;
 		}
-		while(read == MAX_BUFFER_SIZE);
-		
 		
 		fos.flush();
 		fos.close();

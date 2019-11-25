@@ -28,9 +28,10 @@ public final class Boot
 	{	
 		
 		SecretKey secret = KeyFactory.generateAES256();
-		File file = new File("C:\\Users\\Cameron\\Videos\\Desktop\\Desktop 2019.06.19 - 19.05.49.01.mp4");
+		File file = new File("F:\\servertestfoler\\ng-family.jpg");
 		byte[] iv = EncryptionEngine.encryptFile(secret, file);
-		EncryptionEngine.decryptFile(secret, new File("C:\\Users\\Cameron\\Videos\\Desktop\\Desktop 2019.06.19 - 19.05.49.01.mp4.serverEncrypt"), iv);
+		Thread.sleep(1000);
+		EncryptionEngine.decryptFile(secret, new File("F:\\servertestfoler\\ng-family.jpg.svref"), iv);
 		
 		//Server server = new Server();
 		HashTable<String, Integer> test = new HashTable<String, Integer>(1);
