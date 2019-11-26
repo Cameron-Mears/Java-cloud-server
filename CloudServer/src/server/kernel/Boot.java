@@ -17,6 +17,7 @@ import javax.crypto.SecretKey;
 
 import com.security.encryption.AES256;
 import com.security.encryption.KeyFactory;
+import com.util.Utilities;
 
 import server.networking.EncryptionEngine;
 import server.user.base.table.HashTable;
@@ -26,7 +27,6 @@ public final class Boot
 	
 	public static void main(String[] args) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, IOException, InvalidKeySpecException, InvalidParameterSpecException, InvalidAlgorithmParameterException, InterruptedException 
 	{	
-		
 		SecretKey secret = KeyFactory.generateAES256();
 		File file = new File("F:\\servertestfoler\\ng-family.jpg");
 		byte[] iv = EncryptionEngine.encryptFile(secret, file);

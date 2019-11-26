@@ -11,7 +11,7 @@ import server.kernel.VHD;
 public class User 
 {
 	private String username;
-	private String hashedPass;
+	private byte[] hashedPass;
 	private Salt passSalt;
 	private String email;
 	private byte[] keyHash; //encryption keys are made from user info is user forgets password, they use recovery key to restore
@@ -20,7 +20,7 @@ public class User
 	{
 		this.username = name;
 		this.passSalt = new Salt();
-		this.hashedPass = new String(Authentication.digest(passRaw, passSalt, 10));
+		this.hashedPass = Authentication.digest(passRaw, passSalt, 10);
 		
 	}
 	
@@ -29,7 +29,7 @@ public class User
 		return username;
 	}
 	
-	public String getHashedPass() 
+	public byte[] getHashedPass() 
 	{
 		return hashedPass;
 	}

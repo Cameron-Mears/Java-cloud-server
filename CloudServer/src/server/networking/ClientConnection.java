@@ -38,6 +38,15 @@ public class ClientConnection implements NetEventListener, SocketEventListener
 	{
 		this.sock = sock;
 	}
+	
+	public void setUser(User user)
+	{
+		if (user == null)
+		{
+			//send invalid crendationals
+		}
+		this.user = user;
+	}
 
 	@Override
 	public void socketHasData()
