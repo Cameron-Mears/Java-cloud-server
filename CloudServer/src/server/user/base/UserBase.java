@@ -2,7 +2,8 @@ package server.user.base;
 
 import java.io.Serializable;
 
-import server.user.User;
+import com.user.User;
+
 import server.user.base.table.HashTable;
 
 public final class UserBase implements Serializable
@@ -11,8 +12,6 @@ public final class UserBase implements Serializable
 	
 	public static final int USER_PUSH_SUCESSS = 0;
 	public static final int USER_PUSH_ERROR_NAME_IN_USE = 1;
-	public static final int USER_PUSH_ERROR_PHONE_IN_USE = 2;
-	public static final int USER_PUSH_ERROR_EMAIL_IN_USE = 3;
 	
 	
 	private static final int numberOfBaseIndexs = 1000;
@@ -25,14 +24,18 @@ public final class UserBase implements Serializable
 	
 	public int pushUser(User user)
 	{
-		return USER_PUSH_SUCESSS;
+		if (this.userLookup.isKeyInUse(user.getUsername())) return USER_PUSH_ERROR_NAME_IN_USE;
+		else
+		{
+			userLookup.put(user.getUsername(), user);
+			return USER_PUSH_SUCESSS;
+		}
 	}
 	
 	
 	public User fetch(String username)
 	{
-		return userLookup.get(username);
-		
+		return userLookup.get(username);		
 	}
 	
 	

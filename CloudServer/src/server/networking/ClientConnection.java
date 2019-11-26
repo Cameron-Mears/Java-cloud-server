@@ -20,8 +20,7 @@ import com.networking.Packet;
 import com.networking.SocketEventListener;
 import com.security.encryption.Encryptor;
 import com.security.encryption.KeyFactory;
-
-import server.user.User;
+import com.user.User;
 
 public class ClientConnection implements NetEventListener, SocketEventListener
 {

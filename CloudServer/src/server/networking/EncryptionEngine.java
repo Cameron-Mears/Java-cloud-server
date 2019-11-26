@@ -15,6 +15,7 @@ import java.security.spec.InvalidParameterSpecException;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.NoSuchPaddingException;
@@ -50,6 +51,7 @@ public final class EncryptionEngine
 	
 		FileOutputStream fos = new FileOutputStream(file.getAbsoluteFile() + ".svref");
 		
+		
 		boolean loopFlag = true;
 		while (loopFlag)
 		{
@@ -71,7 +73,6 @@ public final class EncryptionEngine
 			
 			for (int block = 0; block < numChunks + 2; block ++)
 			{
-				System.out.println(block);
 				byte[] buf = new byte[ENCRYPTION_BLOCK];
 				cis.read(buf);
 				fos.write(buf);
@@ -118,7 +119,6 @@ public final class EncryptionEngine
 		byte[] fileBuffer = new byte[MAX_BUFFER_SIZE];
 		//File encrpytedStore = new File(file.getAbsoluteFile() + ".serverEncrypt");
 		FileOutputStream fos = new FileOutputStream("F:\\servertestfoler\\test.jpg");
-		
 		boolean flag = true;
 		
 		while (flag)
@@ -134,7 +134,7 @@ public final class EncryptionEngine
 			int numChunks = ByteBuffer.wrap(block,0,4).getInt(); //get nunber of chunks in buffer
 			
 			byte[] buf = new byte[ENCRYPTION_BLOCK];
-			for (int n = 0; n < numChunks-1; n ++)
+			for (int n = 0; n < numChunks-2; n ++)
 			{
 				cis.read(buf);
 				fos.write(buf);
@@ -142,8 +142,12 @@ public final class EncryptionEngine
 			
 			cis.read(buf); //last actual chunk
 			byte[] paddingInfo = new byte[ENCRYPTION_BLOCK];
-			cis.read(paddingInfo);
-			fos.write(buf, 0, ENCRYPTION_BLOCK - (int)paddingInfo[0]);
+			try
+			{
+				cis.read(paddingInfo);
+				fos.write(buf, 0, ENCRYPTION_BLOCK - (int)paddingInfo[0]);
+			}
+			catch (Exception e) {}
 			
 			if (stream.available() <= 0) flag = false;
 		}

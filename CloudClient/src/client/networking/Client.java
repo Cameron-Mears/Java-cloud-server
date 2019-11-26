@@ -31,6 +31,7 @@ public class Client
 	private CipherOutputStream sockOut;
 	private Thread thisThread;
 	
+	
 	public Client() throws ServerUnavaibleException 
 	{
 		
@@ -88,10 +89,6 @@ public class Client
 				
 			}).start(); //waits to accept public key from server
 			
-			
-			//do everything else
-			
-			//viewer.init() etc..
 			
 			
 			byte[] keyPairByte = ObjectWriter.serizalize(aesKey);

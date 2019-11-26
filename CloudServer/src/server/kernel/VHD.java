@@ -5,8 +5,6 @@ package server.kernel;
  */
 public final class VHD 
 {
-	private long byteSize;
-	private String relPath;
-	
+	private long allowedCapacity;
 	
 }

@@ -61,6 +61,11 @@ public class HashTable<Key, Val> implements Serializable
 		return null;
 	}
 	
+	public boolean isKeyInUse(Key key)
+	{
+		return this.get(key) != null;
+	}
+	
 	
 	public boolean put(Key key, Val val) //make sure no identical key exists
 	{

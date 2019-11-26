@@ -60,4 +60,9 @@ public class Renderer
 		}
 				
 	}
+	
+	public void render()
+	{
+		
+	}
 }

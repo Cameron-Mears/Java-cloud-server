@@ -21,36 +21,7 @@ public final class Viewer
 		frame.setResizable(true);
 		frame.setVisible(true);
 		
-		frame.addComponentListener(new ComponentListener()
-		{
-			
-			@Override
-			public void componentShown(ComponentEvent e)
-			{
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void componentResized(ComponentEvent e)
-			{
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void componentMoved(ComponentEvent e)
-			{
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void componentHidden(ComponentEvent e)
-			{
-								
-			}
-		});
+		
 	}
 	
 }

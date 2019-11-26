@@ -2,14 +2,14 @@ package server.security.authentication;
 
 import com.security.hash.SHA256;
 import com.security.logon.LongOnRequest;
+import com.user.User;
 
-import server.user.User;
 import server.user.base.UserBase;
 
 public final class UserAuthenticator 
 {	
 	private UserBase userBase;
-	private static int hashTimes = 1000;
+	private static int hashTimes = 100;
 	public UserAuthenticator(UserBase base)
 	{
 		this.userBase = base;

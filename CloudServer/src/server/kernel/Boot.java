@@ -30,7 +30,7 @@ public final class Boot
 		SecretKey secret = KeyFactory.generateAES256();
 		File file = new File("F:\\servertestfoler\\ng-family.jpg");
 		byte[] iv = EncryptionEngine.encryptFile(secret, file);
-		Thread.sleep(1000);
+		
 		EncryptionEngine.decryptFile(secret, new File("F:\\servertestfoler\\ng-family.jpg.svref"), iv);
 		
 		//Server server = new Server();

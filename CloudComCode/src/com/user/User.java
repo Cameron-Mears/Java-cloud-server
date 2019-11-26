@@ -1,5 +1,6 @@
-package server.user;
+package com.user;
 
+import com.security.hash.Authentication;
 import com.security.hash.Salt;
 
 import server.kernel.VHD;
@@ -13,14 +14,15 @@ public class User
 	private String hashedPass;
 	private Salt passSalt;
 	private String email;
-	private String recoveryCode;
-	private byte[] hashedKey; //used to validate user recovery key
-	private String sessionAuthenicateCode;
-	private VHD data;
-	private int computeCredits;
-	private int accountSecurityLevel;
+	private byte[] keyHash; //encryption keys are made from user info is user forgets password, they use recovery key to restore
 	
-	
+	User(String name, String passRaw)
+	{
+		this.username = name;
+		this.passSalt = new Salt();
+		this.hashedPass = new String(Authentication.digest(passRaw, passSalt, 10));
+		
+	}
 	
 	public String getUsername() 
 	{
@@ -42,20 +44,7 @@ public class User
 		return email;
 	}
 	
-	public VHD getData() 
-	{
-		return data;
-	}
 	
-	public int getComputeCredits() 
-	{
-		return computeCredits;
-	}
-	
-	public int getAccountSecurityLevel() 
-	{
-		return accountSecurityLevel;
-	}
 	
 	
 		
