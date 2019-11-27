@@ -3,7 +3,6 @@ package com.user;
 import com.security.hash.Authentication;
 import com.security.hash.Salt;
 
-import server.kernel.VHD;
 
 /*
  	Server side implementation of user
@@ -49,3 +48,4 @@ public class User
 	
 		
 }
+

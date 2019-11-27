@@ -27,7 +27,7 @@ public final class Utilities
 		for (int i = 0; i < a2.length; i++)
 		{
 			if (a1[i] != a2[i]) return false; 
-		
-		return true;
 		}
+		return true;
+	}
 }

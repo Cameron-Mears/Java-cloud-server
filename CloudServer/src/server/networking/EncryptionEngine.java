@@ -43,9 +43,9 @@ public final class EncryptionEngine
 		
 		FileInputStream stream = new FileInputStream(file);
 		
-		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+		Cipher cipher = Cipher.getInstance("AES");
 		cipher.init(Cipher.ENCRYPT_MODE, aesKey);
-		byte[] iv = cipher.getParameters().getParameterSpec(IvParameterSpec.class).getIV();
+		byte[] iv = null;
 		byte[] fileBuffer = new byte[MAX_BUFFER_SIZE];
 		
 	
@@ -113,8 +113,8 @@ public final class EncryptionEngine
 		
 		FileInputStream stream = new FileInputStream(file);
 		
-		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-		cipher.init(Cipher.DECRYPT_MODE, aesKey, new IvParameterSpec(iv));
+		Cipher cipher = Cipher.getInstance("AES");
+		cipher.init(Cipher.DECRYPT_MODE, aesKey);
 		
 		byte[] fileBuffer = new byte[MAX_BUFFER_SIZE];
 		//File encrpytedStore = new File(file.getAbsoluteFile() + ".serverEncrypt");
