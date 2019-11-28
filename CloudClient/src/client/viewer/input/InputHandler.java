@@ -7,6 +7,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.event.MouseInputListener;
 
@@ -21,8 +22,9 @@ public class InputHandler implements MouseMotionListener, MouseInputListener, Mo
 	}
 	
 	
-	public int addInputEventListener(InputEventListener listener)
+	public boolean addInputEventListener(InputEventListener listener)
 	{
+		return listeners.add(listener);
 		
 	}
 	
@@ -50,15 +52,20 @@ public class InputHandler implements MouseMotionListener, MouseInputListener, Mo
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
-		// TODO Auto-generated method stub
+		for (InputEventListener inputEventListener : listeners)
+		{
+			inputEventListener.onMousePressed(e);
+		}
 		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
-		// TODO Auto-generated method stub
-		
+		for (InputEventListener inputEventListener : listeners)
+		{
+			inputEventListener.onMouseReleased(e);
+		}		
 	}
 
 	@Override
@@ -78,8 +85,10 @@ public class InputHandler implements MouseMotionListener, MouseInputListener, Mo
 	@Override
 	public void mouseMoved(MouseEvent e)
 	{
-		// TODO Auto-generated method stub
-		
+		for (InputEventListener inputEventListener : listeners)
+		{
+			inputEventListener.onMouseMoved(e);
+		}		
 	}
 
 	@Override

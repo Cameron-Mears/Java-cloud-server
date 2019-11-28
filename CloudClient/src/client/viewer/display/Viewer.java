@@ -15,6 +15,7 @@ public final class Viewer implements ComponentListener
 	private Dimension dimension;
 	private Renderer renderer;
 	private JFrame frame;
+	private static Viewer instance;
 	
 	public Viewer(Dimension d)
 	{
@@ -26,11 +27,23 @@ public final class Viewer implements ComponentListener
 		frame.setAlwaysOnTop(true);
 		frame.setVisible(true);
 		frame.addComponentListener(this);
+		
+		instance = this;
+	}
+	
+	public static Viewer getInstance()
+	{
+		return instance;
 	}
 	
 	public Dimension getWinSize()
 	{
 		return dimension;
+	}
+	
+	public JFrame getWindow()
+	{
+		return frame;
 	}
 	
 	public void setRenderer(Renderer r)

@@ -7,21 +7,30 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.Stack;
 
+import client.viewer.display.Viewer;
+import client.viewer.graphics.elements.HyperLink;
+
 public class Renderer
 {
-	private Stack<String> filePath;
+	private Stack<HyperLink> filePath;
 	private Font font;
 	private Dimension window;
+	private static Renderer instance;
 	
+	public static Renderer getInstance()
+	{
+		return instance;
+	}
 	public Renderer(Dimension winSize)
 	{
 		window = winSize;
-		filePath = new Stack<String>();
+		filePath = new Stack<HyperLink>();
+		Renderer.instance = this;
 	}
 	
 	public void drawFilePath(int x, int y, Graphics2D graphics)
 	{
-		Stack<String> drawStack = new Stack<String>();
+		Stack<HyperLink> drawStack = new Stack<HyperLink>();
 		
 		 //move elements from filePath stack to draw stack so that drawing in right order (Home->Folder) becomes (Folder->Home)
 		// now Home is top element and will drawn first
@@ -31,15 +40,9 @@ public class Renderer
 		graphics.setFont(font);
 		while (!drawStack.isEmpty())
 		{
-			String item = drawStack.pop();
-			graphics.drawString(item, x, y);
-			x += graphics.getFontMetrics().stringWidth(item);
-			if (!drawStack.isEmpty())
-			{
-				graphics.drawString("/", x, y);
-				x += graphics.getFontMetrics().stringWidth("/");
-			}
-			
+			HyperLink item = drawStack.pop();
+			item.render(x, y, graphics); //font will be set by hyperLink
+			x += graphics.getFontMetrics().stringWidth(item.getText());
 			filePath.push(item);
 		}
 		
@@ -50,7 +53,7 @@ public class Renderer
 	 //if leaving a direct String can be left null, and it will just pop the top stack item,
 	//if adding a new item pop should be false and the path should be the folder name
 	
-	public void updateFilePath(String item, boolean pop)
+	public void updateFilePath(HyperLink item, boolean pop)
 	{
 		if (pop && !filePath.isEmpty())
 		{
@@ -72,6 +75,8 @@ public class Renderer
 				
 	}
 	
+	
+	
 	public void setWinSize(Dimension d)
 	{
 		this.window = d;
@@ -85,6 +90,8 @@ public class Renderer
 		graphics.setColor(Color.BLUE);
 		graphics.fillRect(0, 0, window.width, height);
 	}
+	
+	
 	
 	public void render(Graphics2D graphics)
 	{
