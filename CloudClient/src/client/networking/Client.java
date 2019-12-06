@@ -130,12 +130,7 @@ public class Client
 	}
 	
 	
-	public void read()
-	{
-		
-	}
-	
-	public void write(byte[] data)
+	public void update()
 	{
 		
 	}

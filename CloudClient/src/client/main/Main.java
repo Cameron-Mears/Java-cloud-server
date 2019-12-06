@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.util.Scanner;
 
+import client.files.FileMapper;
 import client.viewer.display.Viewer;
 import client.viewer.graphics.Renderer;
 import client.viewer.graphics.elements.HyperLink;
@@ -39,8 +40,10 @@ public class Main
 					if (command.length >= 2)
 					{
 						Font font = new Font("Arial", Font.PLAIN, 18);
-						HyperLink link = new HyperLink(0,0,command[1], null, font, new Rectangle(100,200));
+						String url = FileMapper.getStackString();
+						HyperLink link = new HyperLink(0,0,command[1], url, font, new Rectangle(100,200));
 						renderer.updateFilePath(link, false);
+						
 						inputHandler.addInputEventListener(link);
 					}
 				}

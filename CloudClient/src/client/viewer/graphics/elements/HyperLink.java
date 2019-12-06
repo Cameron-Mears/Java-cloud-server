@@ -15,6 +15,7 @@ import client.viewer.graphics.Renderer;
 
 public class HyperLink extends Clickable
 {
+
 	private Color color;
 	private Font font;
 	private String text;
@@ -25,6 +26,7 @@ public class HyperLink extends Clickable
 	public HyperLink(int x, int y, String text, String url, Font font, Rectangle rect)
 	{
 		super(rect, x, y);
+		
 		this.font = font;
 		this.collisionBounds = rect;
 		this.url = url;
@@ -45,6 +47,11 @@ public class HyperLink extends Clickable
 	public String getText()
 	{
 		return text;
+	}
+	
+	public void setText(String text)
+	{
+		this.text = text;
 	}
 	
 	@Override
@@ -78,11 +85,20 @@ public class HyperLink extends Clickable
 			
 	}
 	
+	public String getUrl()
+	{
+		return url;
+	}
+
+	public void setUrl(String url)
+	{
+		this.url = url;
+	}
+	
 	@Override
 	protected void onClick()
 	{
-		System.exit(0);
-
+		
 	}
 
 	@Override

@@ -27,7 +27,6 @@ public abstract class Clickable implements InputEventListener
 	public void onMouseReleased(MouseEvent e)
 	{
 		if (collisionBounds.contains(e.getPoint())) onClick();
-		System.out.println("Fdsfdsfdsf");
 	}
 	
 	

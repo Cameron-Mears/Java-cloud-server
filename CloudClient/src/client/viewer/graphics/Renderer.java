@@ -53,14 +53,28 @@ public class Renderer
 	 //if leaving a direct String can be left null, and it will just pop the top stack item,
 	//if adding a new item pop should be false and the path should be the folder name
 	
-	public void updateFilePath(HyperLink item, boolean pop)
+	public boolean updateFilePath(HyperLink item, boolean pop)
 	{
+		HyperLink link = null;
+		if (!filePath.isEmpty())
+		{
+			link = filePath.peek();
+			link.setText(link.getText() + "/");
+		}
+		
 		if (pop && !filePath.isEmpty())
 		{
 			filePath.pop();
-			return;
+			if (!filePath.isEmpty())
+			{
+				link = filePath.peek();
+				link.setText(link.getText().substring(0,link.getText().length() - 1));
+				return true;
+			}
+			return false;
 		}
 		if (item != null) filePath.push(item);
+		return true;
 	}
 	
 	public boolean setFont(String name, int style, int size) throws InvalidFontException

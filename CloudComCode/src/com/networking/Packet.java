@@ -11,9 +11,16 @@ public abstract class Packet
 	public abstract ByteArrayInputStream getDataStream();
 	public abstract int dataSize();
 	
+	public Packet(PacketType type, byte[] data)
+	{
+		this.data = data;
+	}
+	
 	public PacketType getType()
 	{
 		return type;
 	}
+	
+	
 	
 }
